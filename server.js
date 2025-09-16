@@ -5,21 +5,19 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-// Setup paths for serving frontend files
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Serve static files from "public" folder (or adjust if different)
+// Serve static frontend from public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Environment variable for safety
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "your-key-here";
 
-// Chat endpoint
+// Chatbot endpoint
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -43,16 +41,16 @@ app.post("/chat", async (req, res) => {
     const reply = data.choices?.[0]?.message?.content || "Sorry, I couldn’t understand.";
     res.json({ reply });
   } catch (err) {
-    console.error("Chat endpoint error:", err);
+    console.error("Chat error:", err);
     res.status(500).json({ reply: "Server error, please try again later." });
   }
 });
 
-// ✅ Fix: Use regex for catch-all route (works with Express v5)
+// ✅ Fix: Proper catch-all for SPA (must use a function, not "*")
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// ✅ Use Render’s PORT instead of hardcoding
+// Use Render's port or fallback to 3000 locally
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
