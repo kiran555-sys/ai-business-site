@@ -19,7 +19,7 @@ app.use(cors());
 // Serve static files (your frontend: index.html, styles, images, etc.)
 app.use(express.static(path.join(__dirname, ".")));
 
-const OPENAI_API_KEY = "sk-XXXX..."; // 🔑 keep this secret in Render’s env vars!
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // 🔑 keep this secret in Render’s env vars!
 
 // Chatbot endpoint
 app.post("/chat", async (req, res) => {
@@ -57,3 +57,4 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+
