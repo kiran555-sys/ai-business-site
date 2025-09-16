@@ -6,22 +6,20 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Needed because ES modules don’t have __dirname by default
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 
-// Serve static files (your frontend: index.html, styles, images, etc.)
-app.use(express.static(path.join(__dirname, ".")));
+// Setup paths for serving frontend files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // 🔑 keep this secret in Render’s env vars!
+// Serve static files from "public" folder (or adjust if different)
+app.use(express.static(path.join(__dirname, "public")));
 
-// Chatbot endpoint
+// ✅ Environment variable for safety
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+// Chat endpoint
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -36,7 +34,7 @@ app.post("/chat", async (req, res) => {
         model: "gpt-4o-mini",
         messages: [
           { role: "system", content: "You are a helpful assistant for small businesses." },
-          { role: "user", content: userMessage },
+          { role: "user", content: userMessage }
         ],
       }),
     });
@@ -44,17 +42,17 @@ app.post("/chat", async (req, res) => {
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "Sorry, I couldn’t understand.";
     res.json({ reply });
-
-  } catch (error) {
-    console.error("❌ Error in /chat:", error);
-    res.status(500).json({ reply: "Server error, please try again." });
+  } catch (err) {
+    console.error("Chat endpoint error:", err);
+    res.status(500).json({ reply: "Server error, please try again later." });
   }
 });
 
-// Catch-all route: serve index.html for root ("/") and unknown paths
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+// ✅ Fix: Use regex for catch-all route (works with Express v5)
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// ✅ Use Render’s PORT instead of hardcoding
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
-
