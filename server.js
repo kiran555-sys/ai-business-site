@@ -50,7 +50,7 @@ You ONLY answer questions about:
 - Pricing, setup process, and how customers can get started and advantages of having a good website with chatbot integration.
 If asked anything unrelated (politics, cooking, math, general chit-chat, etc.), Be clear, friendly, and helpful. 
 Encourage the user to try the demo and contact the company for more details or politely respond: 
-"Sorry, I can only answer questions about this website and template."
+"Sorry, I can only answer questions about this website and template."`
 },
           { role: "user", content: userMessage }
         ],
@@ -82,4 +82,5 @@ app.get(/.*/, (req, res) => {
 // Start server (Render will set PORT)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+
 
