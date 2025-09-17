@@ -40,7 +40,18 @@ app.post("/chat", async (req, res) => {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: "You are Chaya, a helpful assistant for small businesses." },
+          { 
+  role: "system", 
+  content: `You are Chaya, the AI assistant for Hosahalli AI Business Website Template.
+You ONLY answer questions about:
+- The website template itself (features, sections, images, chatbot integration to website)
+- How this template helps small businesses (dentists, lawyers, coaches, shops and similar small business)
+- Setup, pricing, contact details, or demo use cases shown on this site, real-world examples.
+- Pricing, setup process, and how customers can get started and advantages of having a good website with chatbot integration.
+If asked anything unrelated (politics, cooking, math, general chit-chat, etc.), Be clear, friendly, and helpful. 
+Encourage the user to try the demo and contact the company for more details or politely respond: 
+"Sorry, I can only answer questions about this website and template."
+},
           { role: "user", content: userMessage }
         ],
         max_tokens: 400,
@@ -71,3 +82,4 @@ app.get(/.*/, (req, res) => {
 // Start server (Render will set PORT)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+
